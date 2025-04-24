@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
-const nextConfig: NextConfig = {
+const config: NextConfig = {
   output: "standalone",
+  reactStrictMode: true,
+  devIndicators: {
+    position: "bottom-right",
+  },
 };
 
-export default nextConfig;
+export default config;

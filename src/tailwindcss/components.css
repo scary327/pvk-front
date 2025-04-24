@@ -1,0 +1,70 @@
+/* containers */
+/* слово container занято tw видимо */
+.main-container {
+  &.center {
+    @apply flex justify-center items-center w-screen h-screen;
+  }
+}
+
+.form-container {
+  @apply flex flex-col gap-4 items-center min-w-[500px];
+}
+
+/* shared */
+.form-field-wrapper {
+  @apply w-full flex flex-col gap-1;
+}
+
+.form-label {
+  @apply text-sm font-semibold text-[color:var(--color-default-text)];
+}
+
+.input-base {
+  @apply w-full px-4 py-2 rounded-xl border-2 text-default-text font-semibold border-[color:var(--color-gray-300)] bg-[color:var(--color-white)] outline-none transition-colors duration-200 ease-in-out;
+}
+
+.input-base:focus {
+  @apply border-[color:var(--color-primary)];
+}
+
+.input-error {
+  @apply bg-[color:var(--color-red-50)] !border-[color:var(--color-red-500)] text-[color:var(--color-red-700)];
+}
+
+.textarea {
+  @apply min-h-[100px] resize-none;
+}
+
+.error-message {
+  @apply text-sm text-[color:var(--color-red-600)];
+
+  & .form-label {
+    @apply text-[color:var(--color-red-600)];
+  }
+}
+
+/* animation */
+.border-b-animation {
+  position: relative;
+  display: inline-block;
+}
+
+.border-b-animation::after {
+  content: "";
+  display: block;
+  width: 0;
+  height: 3px;
+  border-radius: 1000px;
+  background: var(--color-primary);
+  transition: width 0.3s, left 0.3s;
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.border-b-animation:hover::after {
+  width: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+}

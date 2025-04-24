@@ -1,0 +1,17 @@
+@theme default {
+  /* Colors */
+  --color-primary: #636ae8;
+  --color-primary-light: #f2f2fd;
+  --color-dark: #000000;
+  --color-white: #ffffff;
+  --color-default-text: #1f2937;
+
+  /* Grays */
+  --color-gray-300: #d1d5db;
+
+  /* Reds */
+  --color-red-50: #fef2f2;
+  --color-red-500: #ef4444;
+  --color-red-600: #dc2626;
+  --color-red-700: #b91c1c;
+}
