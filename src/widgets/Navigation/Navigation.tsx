@@ -17,7 +17,7 @@ export const Navigation = memo(function Navigation({
   className,
 }: NavigationProps) {
   return (
-    <nav className={clsx("flex flex-col gap-1", className)}>
+    <nav className={clsx("flex items-center gap-6", className)}>
       {items.map((item) => (
         <NavigationItem key={item.id} item={item} onClick={onItemClick} />
       ))}

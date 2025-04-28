@@ -1,10 +1,9 @@
 "use client";
 
 import { memo } from "react";
-import { Avatar } from "@radix-ui/themes";
+import { Avatar, Card, Flex, Box, Text } from "@radix-ui/themes";
 import { GearIcon } from "@radix-ui/react-icons";
 import Link from "next/link";
-import clsx from "clsx";
 
 interface UserPanelProps {
   name: string;
@@ -18,14 +17,12 @@ export const UserPanel = memo(function UserPanel({
   className,
 }: UserPanelProps) {
   return (
-    <div
-      className={clsx(
-        "mt-auto p-4 border-t border-[color:var(--color-gray-300)]",
-        className
-      )}
-    >
-      <div className="flex items-center justify-between">
-        <Link href="/profile" className="flex items-center gap-3">
+    <Box style={{ maxWidth: 320 }} className={className}>
+      <Card
+        size="1"
+        className="border-2 border-[color:var(--color-primary)] !rounded-lg shadow-none p-3"
+      >
+        <Flex gap="3" align="center">
           <Avatar
             size="3"
             src={avatarUrl}
@@ -33,21 +30,26 @@ export const UserPanel = memo(function UserPanel({
             radius="full"
             className="border-2 border-[color:var(--color-primary)]"
           />
-          <span className="font-bold text-[color:var(--color-default-text)] truncate">
-            {name}
-          </span>
-        </Link>
-        <Link
-          href="/settings"
-          className="p-2 rounded-lg hover:bg-[color:var(--color-gray-300)] hover:bg-opacity-20 transition-colors"
-        >
-          <GearIcon
-            width={20}
-            height={20}
-            className="text-[color:var(--color-default-text)]"
-          />
-        </Link>
-      </div>
-    </div>
+          <Box>
+            <Text as="div" size="3" weight="bold">
+              {name}
+            </Text>
+            <Text as="div" size="2" color="gray">
+              Engineering
+            </Text>
+          </Box>
+          {/* <Link
+            href="/settings"
+            className="ml-auto p-2 rounded-lg hover:bg-[color:var(--color-gray-300)] hover:bg-opacity-20 transition-colors"
+          >
+            <GearIcon
+              width={20}
+              height={20}
+              className="text-[color:var(--color-default-text)]"
+            />
+          </Link> */}
+        </Flex>
+      </Card>
+    </Box>
   );
 });
