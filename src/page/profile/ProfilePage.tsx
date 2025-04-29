@@ -7,7 +7,7 @@ import { ProfileTabs } from "@/widgets/ProfileTabs/ProfileTabs";
 
 export const ProfilePage = memo(() => {
   return (
-    <div className="min-h-screen bg-primary-light">
+    <div className="min-h-screen bg-bg-default">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Header Section */}
         <StatsPreviewProfileHeader userData={userData} />

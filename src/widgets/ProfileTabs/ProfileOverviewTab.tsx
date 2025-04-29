@@ -28,7 +28,7 @@ export const ProfileOverviewTab = memo(
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
-            Role Ratings
+            Рейтинг по ролям
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
@@ -40,14 +40,14 @@ export const ProfileOverviewTab = memo(
               <YAxis
                 domain={[0, 100]}
                 label={{
-                  value: "Rating (%)",
+                  value: "Рейтинг (%)",
                   angle: -90,
                   position: "insideLeft",
                 }}
               />
               <RechartsTooltip />
               <Legend />
-              <Bar dataKey="value" name="Rating">
+              <Bar dataKey="value" name="Рейтинг">
                 {roleRatingsData.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={entry.color} />
                 ))}
@@ -58,7 +58,7 @@ export const ProfileOverviewTab = memo(
 
         <div className="bg-white p-6 rounded-lg shadow">
           <h2 className="text-lg font-semibold text-gray-800 mb-4">
-            Skills Overview
+            Обзор навыков
           </h2>
           <ResponsiveContainer width="100%" height={300}>
             <RadarChart
@@ -71,7 +71,7 @@ export const ProfileOverviewTab = memo(
               <PolarAngleAxis dataKey="subject" />
               <PolarRadiusAxis angle={30} domain={[0, 100]} />
               <Radar
-                name="Skills"
+                name="Навыки"
                 dataKey="value"
                 stroke="#8884d8"
                 fill="#8884d8"

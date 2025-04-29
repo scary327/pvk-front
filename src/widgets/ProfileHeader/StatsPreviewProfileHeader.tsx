@@ -79,32 +79,32 @@ export const StatsPreviewProfileHeader = memo(
             </div>
 
             {/* Stats Preview */}
-            <div className="flex-grow grid grid-cols-3 gap-4 text-center">
-              <div className="border border-gray-200 rounded-lg p-3">
+            <div className="w-[200px] text-center">
+              {/* <div className="border border-gray-200 rounded-lg p-3">
                 <div className="text-2xl font-bold text-gray-800">
                   {userData.roles.length}
                 </div>
                 <div className="text-xs text-gray-500">Roles</div>
-              </div>
+              </div> */}
               <div className="border border-gray-200 rounded-lg p-3">
                 <div className="text-2xl font-bold text-gray-800">
                   {totalSkills}
                 </div>
-                <div className="text-xs text-gray-500">Skills</div>
+                <div className="text-xs text-gray-500">Навыков</div>
               </div>
-              <div className="border border-gray-200 rounded-lg p-3">
+              {/* <div className="border border-gray-200 rounded-lg p-3">
                 <div className="text-2xl font-bold text-gray-800">
                   {avgRating.toFixed(1)}
                 </div>
                 <div className="text-xs text-gray-500">Avg. Rating</div>
-              </div>
+              </div> */}
             </div>
           </div>
 
           {/* Best Skill Preview */}
           <div className="mt-4 border-t border-gray-200 pt-4">
             <div className="text-sm font-medium text-gray-500 mb-2">
-              Top Skill: {topSkill.name}
+              Лучший навык: {topSkill.name}
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div

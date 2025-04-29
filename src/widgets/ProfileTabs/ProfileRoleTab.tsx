@@ -22,16 +22,16 @@ export const ProfileRoleTab = memo(
     return (
       <div className="bg-white p-6 rounded-lg shadow">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-800">Skills</h2>
+          <h2 className="text-xl font-semibold text-gray-800">Навыки</h2>
           <div className="flex items-center">
-            <span className="mr-2 text-sm text-gray-500">Rating:</span>
+            <span className="mr-2 text-sm text-gray-500">Рейтинг:</span>
             <StarRating rating={role.rating} />
           </div>
         </div>
 
         {/* Skills Tags */}
         <div className="mb-6">
-          <h3 className="text-sm font-medium text-gray-500 mb-2">Skills</h3>
+          <h3 className="text-sm font-medium text-gray-500 mb-2">Навыки</h3>
           <div className="flex flex-wrap">
             {role.skills.map((skill, index) => (
               <SkillTag key={index} skill={skill} color={roleColor} />
@@ -42,7 +42,7 @@ export const ProfileRoleTab = memo(
         {/* Skills Bar Chart */}
         <div className="mt-8">
           <h3 className="text-sm font-medium text-gray-500 mb-4">
-            Skill Proficiency
+            Уровень владения навыками
           </h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart

@@ -3,11 +3,11 @@ import { Role } from "@/shared/types/profile";
 // Helper function to get role display name
 export const getRoleDisplayName = (role: Role): string => {
   const roleMap: Record<Role, string> = {
-    teamlead: "Team Lead",
-    frontend: "Frontend Developer",
-    backend: "Backend Developer",
-    design: "Designer",
-    analysis: "Business Analyst",
+    teamlead: "Тимлид",
+    frontend: "Frontend-разработчик",
+    backend: "Backend-разработчик",
+    design: "Дизайнер",
+    analysis: "Бизнес-аналитик",
   };
   return roleMap[role];
 };
