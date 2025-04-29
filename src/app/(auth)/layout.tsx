@@ -17,22 +17,22 @@ export default function AuthLayout({
   const navigationItems = useMemo<NavigationItem[]>(
     () => [
       {
-        id: "skills",
-        label: "Навыки",
-        href: "/skills",
-        isActive: pathname === "/skills",
+        id: "profile",
+        label: "Профиль",
+        href: "/profile",
+        isActive: pathname === "/profile",
       },
       {
-        id: "roles",
-        label: "Роли",
-        href: "/roles",
-        isActive: pathname === "/roles",
-      },
-      {
-        id: "ratings",
+        id: "rating",
         label: "Рейтинг",
-        href: "/ratings",
-        isActive: pathname === "/ratings",
+        href: "/rating",
+        isActive: pathname === "/rating",
+      },
+      {
+        id: "estimate",
+        label: "Оценки",
+        href: "/estimate",
+        isActive: pathname === "/estimate",
       },
     ],
     [pathname]
@@ -47,12 +47,12 @@ export default function AuthLayout({
               <Logo />
               <Navigation items={navigationItems} />
             </div>
-            <UserPanel name="User Name" avatarUrl="/path/to/avatar.jpg" />
+            {/* <UserPanel name="User Name" avatarUrl="/path/to/avatar.jpg" /> */}
           </div>
         </div>
       </header>
 
-      <main className="flex-1 container mx-auto px-4 py-8">{children}</main>
+      <main style={{ minHeight: "calc(100vh - 81px)" }}>{children}</main>
     </div>
   );
 }
