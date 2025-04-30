@@ -1,7 +1,7 @@
 import React, { memo, useMemo } from "react";
 import * as Avatar from "@radix-ui/react-avatar";
 import { UserData } from "@/shared/types/profile";
-import { getRoleColor, getRoleDisplayName } from "@/shared/lib/profile";
+import { getRoleColor } from "@/shared/lib/profile";
 
 interface StatsPreviewProfileHeaderProps {
   userData: UserData;
@@ -62,7 +62,7 @@ export const StatsPreviewProfileHeader = memo(
                     color: getRoleColor(userData.mainRole),
                   }}
                 >
-                  {getRoleDisplayName(userData.mainRole)}
+                  {userData.mainRole}
                 </span>
 
                 <div className="mt-2">

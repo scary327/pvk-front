@@ -34,7 +34,11 @@ export const ProfileRoleTab = memo(
           <h3 className="text-sm font-medium text-gray-500 mb-2">Навыки</h3>
           <div className="flex flex-wrap">
             {role.skills.map((skill, index) => (
-              <SkillTag key={index} skill={skill} color={roleColor} />
+              <SkillTag 
+                key={index} 
+                skill={skill} 
+                color={roleColor}
+              />
             ))}
           </div>
         </div>

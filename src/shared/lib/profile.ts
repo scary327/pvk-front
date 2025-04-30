@@ -7,7 +7,7 @@ export const getRoleDisplayName = (role: Role): string => {
     frontend: "Frontend-разработчик",
     backend: "Backend-разработчик",
     design: "Дизайнер",
-    analysis: "Бизнес-аналитик",
+    analytics: "Бизнес-аналитик",
   };
   return roleMap[role];
 };
@@ -19,7 +19,7 @@ export const getRoleColor = (role: Role): string => {
     frontend: "#10B981",
     backend: "#F59E0B",
     design: "#EC4899",
-    analysis: "#8B5CF6",
+    analytics: "#8B5CF6",
   };
   return colorMap[role];
 };

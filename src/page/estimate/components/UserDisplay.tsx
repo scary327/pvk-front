@@ -1,7 +1,6 @@
 import * as Avatar from '@radix-ui/react-avatar';
-
-// Define types
-type Role = 'teamlead' | 'frontend' | 'backend' | 'design' | 'analytics';
+import { getRoleBadgeColor } from '@/page/rating/utils';
+import { Role } from '@/shared/types/profile';
 
 interface User {
   id: string;
@@ -10,15 +9,6 @@ interface User {
   avatarUrl: string;
   role: Role;
 }
-
-// Role badge colors
-const roleBadgeColors = {
-  teamlead: 'bg-blue-600 text-white',
-  frontend: 'bg-green-600 text-white',
-  backend: 'bg-purple-600 text-white',
-  design: 'bg-orange-600 text-white',
-  analytics: 'bg-cyan-600 text-white'
-};
 
 interface UserDisplayProps {
   user: User;
@@ -38,7 +28,7 @@ export const UserDisplay = ({ user }: UserDisplayProps) => (
     </Avatar.Root>
     <div>
       <p className="text-sm font-medium">{user.firstName} {user.lastName}</p>
-      <span className={`inline-block px-2 py-1 text-xs rounded-full ${roleBadgeColors[user.role]}`}>
+      <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${getRoleBadgeColor(user.role)}`}>
         {user.role}
       </span>
     </div>

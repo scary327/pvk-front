@@ -1,4 +1,4 @@
-export type Role = "teamlead" | "frontend" | "backend" | "design" | "analysis";
+export type Role = "teamlead" | "frontend" | "backend" | "design" | "analytics" | "softskills";
 
 export interface Skill {
   name: string;

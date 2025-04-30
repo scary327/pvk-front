@@ -53,14 +53,25 @@ export const userData: UserData = {
       ],
     },
     {
-      role: "analysis",
+      role: "analytics",
       rating: 3.5,
       skills: [
         { name: "Requirements", level: 75 },
-        { name: "Data Analysis", level: 70 },
+        { name: "Data Analytics", level: 70 },
         { name: "User Stories", level: 80 },
         { name: "Testing", level: 65 },
         { name: "Documentation", level: 60 },
+      ],
+    },
+    {
+      role: "softskills",
+      rating: 4.0,
+      skills: [
+        { name: "Коммуникация", level: 85 },
+        { name: "Командная работа", level: 90 },
+        { name: "Решение проблем", level: 80 },
+        { name: "Тайм-менеджмент", level: 75 },
+        { name: "Лидерство", level: 70 },
       ],
     },
   ],

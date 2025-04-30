@@ -1,7 +1,5 @@
 import { UserDisplay } from './UserDisplay';
-
-// Define types
-type Role = 'teamlead' | 'frontend' | 'backend' | 'design' | 'analytics';
+import { Role } from '@/shared/types/profile';
 
 interface User {
   id: string;
@@ -43,7 +41,7 @@ export const TasksTable = ({ tasks, type }: TasksTableProps) => {
               <th className="text-left py-3 px-4 font-medium">Исполнитель</th>
               <th className="text-left py-3 px-4 font-medium">Ответственный</th>
               <th className="text-left py-3 px-4 font-medium">Срок</th>
-              <th className="text-left py-3 px-4 font-medium text-center">
+              <th className="text-left py-3 px-4 font-medium">
                 {isEstimated ? 'Дата оценки' : 'Статус'}
               </th>
             </tr>
