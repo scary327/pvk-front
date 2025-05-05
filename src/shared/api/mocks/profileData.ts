@@ -67,8 +67,8 @@ export const userData: UserData = {
       role: "softskills",
       rating: 4.0,
       skills: [
-        { name: "Коммуникация", level: 85 },
-        { name: "Командная работа", level: 90 },
+        { name: "Коммуникация", level: 85, required: true },
+        { name: "Командная работа", level: 90, required: true },
         { name: "Решение проблем", level: 80 },
         { name: "Тайм-менеджмент", level: 75 },
         { name: "Лидерство", level: 70 },
@@ -76,3 +76,15 @@ export const userData: UserData = {
     },
   ],
 };
+
+export const allSoftSkills = [
+  "Коммуникация",
+  "Командная работа",
+  "Решение проблем",
+  "Тайм-менеджмент",
+  "Лидерство",
+  "Креативность",
+  "Гибкость",
+  "Критическое мышление",
+  "Эмоциональный интеллект"
+];

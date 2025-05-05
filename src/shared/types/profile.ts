@@ -3,6 +3,7 @@ export type Role = "teamlead" | "frontend" | "backend" | "design" | "analytics" 
 export interface Skill {
   name: string;
   level: number; // 0-100
+  required?: boolean;
 }
 
 export interface UserRoleData {

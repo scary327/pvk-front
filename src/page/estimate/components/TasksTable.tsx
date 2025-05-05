@@ -1,5 +1,6 @@
 import { UserDisplay } from './UserDisplay';
 import { Role } from '@/shared/types/profile';
+import { useRouter } from 'next/navigation';
 
 interface User {
   id: string;
@@ -26,7 +27,12 @@ interface TasksTableProps {
 }
 
 export const TasksTable = ({ tasks, type }: TasksTableProps) => {
+  const router = useRouter();
   const isEstimated = type === 'estimated';
+  
+  const handleRowClick = (taskId: string) => {
+    router.push(`/estimate/${taskId}`);
+  };
   
   return (
     <div className="rounded-md overflow-hidden border border-gray-200">
@@ -59,6 +65,7 @@ export const TasksTable = ({ tasks, type }: TasksTableProps) => {
                   key={task.id} 
                   className="border-b border-gray-100 cursor-pointer hover:bg-gray-50"
                   style={isEstimated ? { backgroundColor: 'var(--color-primary-light)' } : undefined}
+                  onClick={() => handleRowClick(task.id)}
                 >
                   <td className="py-3 px-4 font-medium">{task.title}</td>
                   <td className="py-3 px-4">
