@@ -1,0 +1,37 @@
+version: "3.8"
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    # Если ваше приложение Next.js требует какие-либо переменные окружения для запуска,
+    # вы можете определить их здесь или использовать .env файл
+    # environment:
+    #   NODE_ENV: production
+    #   SOME_API_KEY: your_api_key
+    # Порт 3000 внутри контейнера app. Мы не будем публиковать его наружу напрямую,
+    # так как Nginx будет проксировать запросы к нему.
+    # expose:
+    #   - "3000"
+    restart: unless-stopped
+    networks:
+      - app-network
+
+  nginx:
+    image: nginx:1.25-alpine # Используем легковесный образ Nginx
+    ports:
+      - "80:80" # Публикуем порт 80 Nginx на хост-машине
+    #   - "443:443" # Если вы планируете использовать SSL, раскомментируйте
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro # Монтируем конфигурацию Nginx
+      # - ./path/to/your/ssl/certs:/etc/nginx/certs:ro # Если используете SSL, монтируйте сертификаты
+    depends_on:
+      - app # Nginx запустится после того, как сервис app будет готов (не гарантирует, что приложение внутри app уже запущено)
+    restart: unless-stopped
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

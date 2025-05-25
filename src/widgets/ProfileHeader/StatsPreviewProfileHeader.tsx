@@ -1,37 +1,25 @@
-import React, { memo, useMemo } from "react";
+import React, { memo } from "react";
 import * as Avatar from "@radix-ui/react-avatar";
-import { UserData } from "@/shared/types/profile";
-import { getRoleColor } from "@/shared/lib/profile";
+import { ProfileResponse } from "@/shared/types/api/profile";
+import { getContrastColor } from "@/shared/utils/colorUtils";
+import { Edit3 } from "lucide-react";
 
 interface StatsPreviewProfileHeaderProps {
-  userData: UserData;
+  profileData: ProfileResponse;
+  isOwnProfile?: boolean;
+  onEditMainCategory?: () => void;
+  editButtonRef?: React.Ref<HTMLButtonElement>;
 }
 
 export const StatsPreviewProfileHeader = memo(
-  ({ userData }: StatsPreviewProfileHeaderProps) => {
-    // Calculate some stats for the preview
-    const totalSkills = useMemo(
-      () => userData.roles.reduce((acc, role) => acc + role.skills.length, 0),
-      [userData.roles]
-    );
-
-    const avgRating = useMemo(
-      () =>
-        userData.roles.reduce((acc, role) => acc + role.rating, 0) /
-        userData.roles.length,
-      [userData.roles]
-    );
-
-    const topSkill = useMemo(
-      () =>
-        userData.roles
-          .flatMap((role) => role.skills)
-          .reduce((max, skill) => (skill.level > max.level ? skill : max), {
-            name: "",
-            level: 0,
-          }),
-      [userData.roles]
-    );
+  ({
+    profileData,
+    isOwnProfile,
+    onEditMainCategory,
+    editButtonRef,
+  }: StatsPreviewProfileHeaderProps) => {
+    const mainCategory = profileData.mainSkillCategory;
+    const mainCategoryColor = mainCategory?.color;
 
     return (
       <div className="bg-white rounded-lg shadow mb-8 overflow-hidden">
@@ -42,78 +30,90 @@ export const StatsPreviewProfileHeader = memo(
               <Avatar.Root className="flex-shrink-0 mr-4">
                 <Avatar.Image
                   className="h-20 w-20 rounded-full object-cover"
-                  src={userData.avatarUrl}
-                  alt={`${userData.firstName} ${userData.lastName}`}
+                  src="/api/placeholder/150/150"
+                  alt={`${profileData.firstName} ${profileData.lastName}`}
                 />
                 <Avatar.Fallback className="h-20 w-20 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 text-2xl font-semibold">
-                  {userData.firstName.charAt(0)}
-                  {userData.lastName.charAt(0)}
+                  {profileData.firstName.charAt(0)}
+                  {profileData.lastName.charAt(0)}
                 </Avatar.Fallback>
               </Avatar.Root>
-
               <div>
-                <h1 className="text-xl font-bold text-gray-800">
-                  {userData.firstName} {userData.lastName}
+                <h1 className="text-2xl font-bold text-gray-900">
+                  {profileData.firstName} {profileData.middleName}{" "}
+                  {profileData.lastName}
                 </h1>
-                <span
-                  className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-opacity-20 mt-1"
-                  style={{
-                    backgroundColor: `${getRoleColor(userData.mainRole)}20`,
-                    color: getRoleColor(userData.mainRole),
-                  }}
-                >
-                  {userData.mainRole}
-                </span>
-
-                <div className="mt-2">
-                  {userData.teams.map((team, index) => (
-                    <span
-                      key={index}
-                      className="inline-flex items-center px-2 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-medium mr-1 mb-1"
+                <div className="flex items-center mt-1">
+                  <span
+                    className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium mr-2 ${
+                      !mainCategoryColor ? "bg-gray-200 text-gray-800" : ""
+                    }`}
+                    style={
+                      mainCategoryColor
+                        ? {
+                            backgroundColor: mainCategoryColor,
+                            color: getContrastColor(mainCategoryColor),
+                          }
+                        : {}
+                    }
+                  >
+                    {mainCategory ? mainCategory.name : "Категория не указана"}
+                  </span>
+                  {isOwnProfile && onEditMainCategory && (
+                    <button
+                      ref={editButtonRef}
+                      onClick={onEditMainCategory}
+                      className="text-gray-500 hover:text-gray-700 transition-colors ml-2 p-1 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300"
+                      title="Изменить основную категорию"
                     >
-                      {team}
+                      <Edit3 size={18} />
+                    </button>
+                  )}
+                </div>
+                <div className="mt-2 space-y-1">
+                  {profileData.teams.map((team) => (
+                    <span
+                      key={team.id}
+                      className="inline-block bg-blue-100 text-blue-800 text-sm px-2 py-1 rounded mr-2"
+                    >
+                      {team.name} • {team.role}
                     </span>
                   ))}
                 </div>
               </div>
             </div>
 
-            {/* Stats Preview */}
-            <div className="w-[200px] text-center">
-              {/* <div className="border border-gray-200 rounded-lg p-3">
-                <div className="text-2xl font-bold text-gray-800">
-                  {userData.roles.length}
-                </div>
-                <div className="text-xs text-gray-500">Roles</div>
-              </div> */}
-              <div className="border border-gray-200 rounded-lg p-3">
-                <div className="text-2xl font-bold text-gray-800">
-                  {totalSkills}
-                </div>
-                <div className="text-xs text-gray-500">Навыков</div>
+            {/* Stats */}
+            <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="bg-gray-50 p-4 rounded">
+                <dt className="text-sm font-medium text-gray-500">
+                  Лучший навык
+                </dt>
+                {profileData.bestSkill && (
+                  <dd className="mt-1 text-xl font-semibold text-gray-900">
+                    {profileData.bestSkill.name}
+                    <span className="text-sm text-gray-500 ml-2">
+                      Рейтинг: {profileData.bestSkill.rating}
+                    </span>
+                  </dd>
+                )}
               </div>
-              {/* <div className="border border-gray-200 rounded-lg p-3">
-                <div className="text-2xl font-bold text-gray-800">
-                  {avgRating.toFixed(1)}
-                </div>
-                <div className="text-xs text-gray-500">Avg. Rating</div>
-              </div> */}
-            </div>
-          </div>
-
-          {/* Best Skill Preview */}
-          <div className="mt-4 border-t border-gray-200 pt-4">
-            <div className="text-sm font-medium text-gray-500 mb-2">
-              Лучший навык: {topSkill.name}
-            </div>
-            <div className="w-full bg-gray-200 rounded-full h-2">
-              <div
-                className="h-2 rounded-full"
-                style={{
-                  width: `${topSkill.level}%`,
-                  backgroundColor: getRoleColor(userData.mainRole),
-                }}
-              ></div>
+              <div className="bg-gray-50 p-4 rounded">
+                <dt className="text-sm font-medium text-gray-500">
+                  Всего навыков
+                </dt>
+                <dd className="mt-1 text-xl font-semibold text-gray-900">
+                  {profileData.totalNumberSkills}
+                </dd>
+              </div>
+              <div className="bg-gray-50 p-4 rounded">
+                <dt className="text-sm font-medium text-gray-500">
+                  Категории навыков
+                </dt>
+                <dd className="mt-1 text-xl font-semibold text-gray-900">
+                  {profileData.skillCategories.length}
+                </dd>
+              </div>
             </div>
           </div>
         </div>

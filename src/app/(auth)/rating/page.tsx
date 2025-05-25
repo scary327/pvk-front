@@ -1,282 +1,362 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { Filters } from '@/page/rating/components/Filters';
-import { StudentsTable } from '@/page/rating/components/StudentsTable';
-import { Role, Student } from '@/page/rating/types';
+import { useState, useEffect, useMemo } from "react";
+import { Filters, SelectedSkillFilter } from "@/page/rating/components/Filters";
+import { StudentsTable } from "@/page/rating/components/StudentsTable";
+// import { Role, Student } from '@/page/rating/types'; // Старые моковые типы
 
-// Mock data - university courses
-const mockStudents: Student[] = [
-  {
-    id: 1,
-    firstName: 'Alex',
-    lastName: 'Johnson',
-    avatar: '/avatars/alex.jpg',
-    teams: ['Alpha Team', 'Project X'],
-    course: 2,
-    mainRole: 'frontend',
-    rating: 4.8,
-    skillTags: [
-      { id: 1, name: 'React', category: 'frontend', level: 85 },
-      { id: 2, name: 'TypeScript', category: 'frontend', level: 70 },
-      { id: 3, name: 'UI/UX', category: 'frontend', level: 60 }
-    ]
-  },
-  {
-    id: 2,
-    firstName: 'Sarah',
-    lastName: 'Williams',
-    avatar: '/avatars/sarah.jpg',
-    teams: ['Delta Squad', 'DevOps Masters'],
-    course: 3,
-    mainRole: 'backend',
-    rating: 4.5,
-    skillTags: [
-      { id: 4, name: 'Node.js', category: 'backend', level: 90 },
-      { id: 5, name: 'MongoDB', category: 'backend', level: 75 },
-      { id: 6, name: 'AWS', category: 'backend', level: 85 }
-    ]
-  },
-  {
-    id: 3,
-    firstName: 'Michael',
-    lastName: 'Chen',
-    avatar: '/avatars/michael.jpg',
-    teams: ['Data Wizards', 'ML Group'],
-    course: 4,
-    mainRole: 'analytics',
-    rating: 4.9,
-    skillTags: [
-      { id: 7, name: 'Python', category: 'analytics', level: 95 },
-      { id: 8, name: 'Machine Learning', category: 'analytics', level: 85 },
-      { id: 9, name: 'Data Visualization', category: 'analytics', level: 80 }
-    ]
-  },
-  {
-    id: 4,
-    firstName: 'Emma',
-    lastName: 'Davis',
-    avatar: '/avatars/emma.jpg',
-    teams: ['UX Innovators', 'Creative Hub'],
-    course: 2,
-    mainRole: 'design',
-    rating: 4.7,
-    skillTags: [
-      { id: 10, name: 'Figma', category: 'design', level: 95 },
-      { id: 11, name: 'User Research', category: 'design', level: 80 },
-      { id: 12, name: 'Prototyping', category: 'design', level: 85 }
-    ]
-  },
-  {
-    id: 5,
-    firstName: 'David',
-    lastName: 'Garcia',
-    avatar: '/avatars/david.jpg',
-    teams: ['Project Leaders', 'Agile Masters'],
-    course: 1,
-    mainRole: 'teamlead',
-    rating: 4.6,
-    skillTags: [
-      { id: 13, name: 'Agile', category: 'teamlead', level: 90 },
-      { id: 14, name: 'Leadership', category: 'teamlead', level: 95 },
-      { id: 15, name: 'Scrum', category: 'teamlead', level: 85 }
-    ]
-  }
-];
+// Импортируем новые типы и хук
+import {
+  UserSearchResultItem,
+  // SkillCriterion, // Больше не нужен здесь, т.к. selectedSkillTags будет SelectedSkillFilter[]
+  // UserSearchRequestBody, // Можно использовать, если хотим типизировать все тело запроса отдельно
+  // UserSearchQueryParams, // Аналогично для параметров
+} from "@/shared/types/api/users";
+import { useUserSearch } from "@/entities/users/hooks/useUserSearch";
+import { useSkillSearch } from "@/entities/skills/hooks/useSkillSearch"; // Новый хук
+import { Skill } from "@/shared/types/api/profile"; // Нужен для типа availableSkills
+import React from "react"; // Добавляем импорт React для useMemo
+import { UserSearchResponse } from "@/shared/types/api/users"; // Импортируем UserSearchResponse, чтобы указать тип для data
+import { useDebounce } from "@/shared/hooks/useDebounce"; // Обновляем путь к useDebounce
+import { StudentCompareModal } from "@/page/rating/components/StudentCompareModal"; // Импортируем модальное окно
 
-// Available roles
-const roles: Role[] = ['teamlead', 'frontend', 'backend', 'analytics', 'design'];
+// Mock data - УДАЛЯЕМ
+// const mockStudents: Student[] = [ ... ];
 
-// Rating range
-const ratings = [1, 2, 3, 4, 5];
+// Available roles - УДАЛЯЕМ (предполагаем, что роли/категории для фильтрации будут браться иначе или из API)
+// const roles: Role[] = [ ... ];
 
-// All possible skills for search
-const allSkills = [
-  'React', 'Angular', 'Vue', 'TypeScript', 'JavaScript', 'HTML', 'CSS', 'SASS',
-  'Node.js', 'Express', 'MongoDB', 'PostgreSQL', 'MySQL', 'Redis', 'AWS', 'GCP', 'Azure',
-  'Python', 'Machine Learning', 'Data Visualization', 'R', 'TensorFlow', 'Pandas', 'NumPy',
-  'Figma', 'Sketch', 'Adobe XD', 'User Research', 'Prototyping', 'UI Design', 'UX Design',
-  'Agile', 'Leadership', 'Scrum', 'Product Management', 'Project Management', 'DevOps',
-  'Git', 'Docker', 'Kubernetes', 'CI/CD', 'Testing', 'Jest', 'Selenium', 'Cypress',
-  'GraphQL', 'REST API', 'Microservices', 'System Design', 'Algorithms', 'Data Structures'
-];
+// Rating range - УДАЛЯЕМ (аналогично)
+// const ratings = [1, 2, 3, 4, 5];
+
+// All possible skills for search - УДАЛЯЕМ (навыки для фильтра будут браться иначе)
+// const allSkills = [ ... ];
 
 export default function StudentsRatingTable() {
   // State variables
-  const [students, setStudents] = useState<Student[]>(mockStudents);
-  const [filteredStudents, setFilteredStudents] = useState<Student[]>(mockStudents);
-  const [searchQuery, setSearchQuery] = useState('');
+  // Заменяем Student на UserSearchResultItem
+  const [students, setStudents] = useState<UserSearchResultItem[]>([]);
+  // filteredStudents больше не нужен, так как фильтрация на бэкенде.
+  // Сортировка будет применяться к students перед передачей в StudentsTable.
+  // const [filteredStudents, setFilteredStudents] = useState<UserSearchResultItem[]>([]);
+
+  // Состояния для фильтров остаются, но их обработка изменится
+  const [searchQuery, setSearchQuery] = useState("");
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
-  const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-  const [selectedRating, setSelectedRating] = useState<number | null>(null);
-  const [selectedSkillTags, setSelectedSkillTags] = useState<{name: string, level: number}[]>([]);
-  const [skillSearchQuery, setSkillSearchQuery] = useState('');
-  const [filteredSkills, setFilteredSkills] = useState<string[]>(allSkills);
+  // selectedRole - тип Role нужно будет заменить или получать актуальные значения
+  const [selectedRole, setSelectedRole] = useState<string | null>(null); // Пока string, потом можно уточнить
+  const [selectedRating, setSelectedRating] = useState<number | null>(null); // Это может быть averageSkillRating
+
+  // selectedSkillTags теперь SelectedSkillFilter[]
+  const [selectedSkillTags, setSelectedSkillTags] = useState<
+    SelectedSkillFilter[]
+  >([]);
+
+  const [skillSearchQuery, setSkillSearchQuery] = useState("");
+  // availableSkills - будет заполняться из useAllSkills
+  const [availableSkills, setAvailableSkills] = useState<Skill[]>([]);
+
+  // Debounce для skillSearchQuery
+  const debouncedSkillSearchQuery = useDebounce(skillSearchQuery, 500); // Задержка 500ms
+
   const [sortConfig, setSortConfig] = useState<{
-    key: string | null,
-    direction: 'ascending' | 'descending'
-  }>({ key: null, direction: 'ascending' });
-  
-  // Filter skills based on search
+    key: string | null;
+    direction: "ascending" | "descending";
+  }>({ key: null, direction: "ascending" });
+
+  // TODO: Добавить состояние для пагинации (page, size, totalElements)
+  const [page, setPage] = useState(0); // Например, 0-индексированная страница
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [size, _setSize] = useState(10); // _setSize используется для подавления ошибки, если size не меняется
+
+  // Состояние для выбранных студентов для сравнения
+  const [selectedStudentsForCompare, setSelectedStudentsForCompare] = useState<
+    string[]
+  >([]);
+
+  // Состояние для открытия модального окна сравнения
+  const [isCompareModalOpen, setIsCompareModalOpen] = useState(false);
+
+  // Загрузка доступных навыков с помощью useSkillSearch и debounced значения
+  const { data: skillSearchData, isLoading: isLoadingSkills } = useSkillSearch(
+    { query: debouncedSkillSearchQuery, page: 0, size: 30 } // page и size можно сделать настраиваемыми, если нужно
+  );
+
   useEffect(() => {
-    if (skillSearchQuery.trim() === '') {
-      setFilteredSkills(allSkills);
-    } else {
-      const query = skillSearchQuery.toLowerCase();
-      setFilteredSkills(
-        allSkills.filter(skill => 
-          skill.toLowerCase().includes(query) && 
-          !selectedSkillTags.some(tag => tag.name === skill)
-        )
-      );
+    if (skillSearchData && skillSearchData.content) {
+      setAvailableSkills(skillSearchData.content);
     }
-  }, [skillSearchQuery, selectedSkillTags]);
+  }, [skillSearchData]);
 
-  // Filter students based on all filters
+  const searchMutation = useUserSearch({
+    onSuccess: (data: UserSearchResponse) => {
+      console.log("Data from useUserSearch:", data);
+      if (data && Array.isArray(data.content)) {
+        setStudents(data.content);
+      } else {
+        console.error(
+          "Data from useUserSearch does not have a .content array!",
+          data
+        );
+        setStudents([]);
+      }
+    },
+    onError: (error) => {
+      console.error("Ошибка поиска пользователей:", error);
+      setStudents([]);
+    },
+  });
+
+  // Функция для выполнения поиска
+  const handleSearch = (currentPage = page, currentSize = size) => {
+    const queryParams = { page: currentPage, size: currentSize };
+    const requestBody = {
+      query: searchQuery || undefined,
+      skillCriteria: selectedSkillTags.map((tag) => ({
+        skillId: tag.skillId,
+        minRating: tag.minRating,
+      })),
+      // TODO: Добавить другие фильтры (course, role, rating) если API их поддерживает
+      // Например: course: selectedCourse, category: selectedRole, minAvgRating: selectedRating
+    };
+    searchMutation.mutate({ params: queryParams, body: requestBody });
+  };
+
+  // Вызов поиска при изменении фильтров или пагинации
+  // Это нужно делать аккуратно, чтобы не было лишних запросов.
+  // Возможно, лучше делать поиск по кнопке или с debounce для текстовых полей.
   useEffect(() => {
-    let result = [...students];
+    handleSearch();
+    // Сбрасываем выбор студентов при каждом новом поиске/фильтрации
+    setSelectedStudentsForCompare([]);
+  }, [
+    searchQuery,
+    selectedCourse,
+    selectedRole,
+    selectedRating,
+    selectedSkillTags,
+    page,
+    size,
+  ]); // Обновляем зависимости
 
-    // Filter by search query
-    if (searchQuery) {
-      const query = searchQuery.toLowerCase();
-      result = result.filter(student => 
-        student.firstName.toLowerCase().includes(query) || 
-        student.lastName.toLowerCase().includes(query) ||
-        student.teams.some(team => team.toLowerCase().includes(query))
-      );
-    }
+  // Filter skills based on search - Эту логику нужно будет переделать
+  // Теперь навыки для фильтра (filteredSkills) должны приходить с бэкенда или быть выбраны иначе
+  // useEffect(() => { ... });
 
-    // Filter by course
-    if (selectedCourse !== null) {
-      result = result.filter(student => student.course === selectedCourse);
-    }
+  // КЛИЕНТСКАЯ ФИЛЬТРАЦИЯ УДАЛЕНА, ТЕПЕРЬ НА БЭКЕНДЕ
+  // Сортировка будет производиться с помощью useMemo ниже
 
-    // Filter by role
-    if (selectedRole !== null) {
-      result = result.filter(student => student.mainRole === selectedRole);
-    }
-
-    // Filter by rating
-    if (selectedRating !== null) {
-      result = result.filter(student => Math.floor(student.rating) >= selectedRating);
-    }
-
-    // Filter by skill tags with level
-    if (selectedSkillTags.length > 0) {
-      result = result.filter(student => 
-        selectedSkillTags.every(selectedTag => {
-          const studentTag = student.skillTags.find(tag => tag.name === selectedTag.name);
-          return studentTag && (studentTag.level || 0) >= selectedTag.level;
-        })
-      );
-    }
-
-    // Sort if needed
+  // Используем useMemo для сортировки студентов
+  const sortedStudents = useMemo(() => {
+    const result = [...students];
     if (sortConfig.key) {
       result.sort((a, b) => {
-        if (sortConfig.key === 'name') {
-          const nameA = `${a.firstName} ${a.lastName}`.toLowerCase();
-          const nameB = `${b.firstName} ${b.lastName}`.toLowerCase();
-          if (nameA < nameB) return sortConfig.direction === 'ascending' ? -1 : 1;
-          if (nameA > nameB) return sortConfig.direction === 'ascending' ? 1 : -1;
+        if (sortConfig.key === "name") {
+          const nameA = `${a.firstName ?? ""} ${a.lastName ?? ""}`
+            .toLowerCase()
+            .trim();
+          const nameB = `${b.firstName ?? ""} ${b.lastName ?? ""}`
+            .toLowerCase()
+            .trim();
+          if (nameA < nameB)
+            return sortConfig.direction === "ascending" ? -1 : 1;
+          if (nameA > nameB)
+            return sortConfig.direction === "ascending" ? 1 : -1;
           return 0;
         }
-        
-        if (sortConfig.key === 'rating') {
-          return sortConfig.direction === 'ascending' 
-            ? a.rating - b.rating 
-            : b.rating - a.rating;
+        if (sortConfig.key === "rating") {
+          const ratingA =
+            typeof a.averageSkillRating === "number"
+              ? a.averageSkillRating
+              : -Infinity;
+          const ratingB =
+            typeof b.averageSkillRating === "number"
+              ? b.averageSkillRating
+              : -Infinity;
+          return sortConfig.direction === "ascending"
+            ? ratingA - ratingB
+            : ratingB - ratingA;
         }
-        
-        if (sortConfig.key === 'course') {
-          return sortConfig.direction === 'ascending' 
-            ? a.course - b.course 
-            : b.course - a.course;
+        if (sortConfig.key === "course") {
+          const courseA =
+            typeof a.numberCourse === "number" ? a.numberCourse : -Infinity;
+          const courseB =
+            typeof b.numberCourse === "number" ? b.numberCourse : -Infinity;
+          return sortConfig.direction === "ascending"
+            ? courseA - courseB
+            : courseB - courseA;
         }
-        
         return 0;
       });
     }
+    return result;
+  }, [students, sortConfig]);
 
-    setFilteredStudents(result);
-  }, [searchQuery, selectedCourse, selectedRole, selectedRating, selectedSkillTags, sortConfig, students]);
-
-  // Handle sort requests
+  // Handle sort requests - остается без изменений
   const requestSort = (key: string) => {
-    let direction: 'ascending' | 'descending' = 'ascending';
-    if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-      direction = 'descending';
+    let direction: "ascending" | "descending" = "ascending";
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+      direction = "descending";
     }
     setSortConfig({ key, direction });
   };
 
-  // Add a skill tag
-  const addSkillTag = (skill: string) => {
-    if (!selectedSkillTags.some(tag => tag.name === skill)) {
-      setSelectedSkillTags([...selectedSkillTags, { name: skill, level: 50 }]);
+  // Логика добавления/удаления/обновления SkillTags ДОЛЖНА БЫТЬ ПЕРЕДЕЛАНА
+  // Теперь selectedSkillTags должен хранить {skillId: number, minRating: number}
+  // Для этого нужен доступ к списку всех навыков с их ID.
+
+  const addSkillTagToFilter = (skill: Skill) => {
+    // Принимаем объект Skill
+    if (!selectedSkillTags.some((tag) => tag.skillId === skill.id)) {
+      // Добавляем новый навык в фильтр с дефолтным minRating
+      setSelectedSkillTags([
+        ...selectedSkillTags,
+        { skillId: skill.id, name: skill.name, minRating: 1 },
+      ]);
     }
-    setSkillSearchQuery('');
   };
 
-  // Remove a skill tag
-  const removeSkillTag = (skillName: string) => {
-    setSelectedSkillTags(selectedSkillTags.filter(tag => tag.name !== skillName));
-  };
-
-  // Update skill level
-  const updateSkillLevel = (skillName: string, level: number) => {
+  const removeSkillTagFromFilter = (skillIdToRemove: number) => {
     setSelectedSkillTags(
-      selectedSkillTags.map(tag => 
-        tag.name === skillName ? { ...tag, level } : tag
+      selectedSkillTags.filter((tag) => tag.skillId !== skillIdToRemove)
+    );
+  };
+
+  const updateSkillRatingInFilter = (
+    skillIdToUpdate: number,
+    newRating: number
+  ) => {
+    setSelectedSkillTags(
+      selectedSkillTags.map((tag) =>
+        tag.skillId === skillIdToUpdate ? { ...tag, minRating: newRating } : tag
       )
     );
   };
 
-  // Reset all filters
-  const resetFilters = () => {
-    setSearchQuery('');
+  const resetFiltersAndSearch = () => {
+    setSearchQuery("");
     setSelectedCourse(null);
-    setSelectedRole('All Roles');
+    setSelectedRole(null);
     setSelectedRating(null);
     setSelectedSkillTags([]);
-    setSortConfig({ key: null, direction: 'ascending' });
+    setSortConfig({ key: null, direction: "ascending" });
+    setPage(0);
+    setSkillSearchQuery("");
+    // Вызываем поиск с чистыми фильтрами и первой страницей
+    // handleSearch(0, size); // Можно сделать так, или useEffect сам среагирует на смену page
+  };
+
+  // TODO: Загрузить/определить опции для селектов (роли/категории, диапазоны рейтингов)
+  const roleOptions = [
+    { value: "frontend", label: "Frontend" },
+    { value: "backend", label: "Backend" },
+  ]; // Пример
+  const ratingOptions = [
+    { value: "3", label: "3+" },
+    { value: "4", label: "4+" },
+  ]; // Пример
+
+  // Обработчик выбора/снятия выбора студента для сравнения
+  const handleToggleStudentSelection = (userId: string) => {
+    setSelectedStudentsForCompare((prevSelected) =>
+      prevSelected.includes(userId)
+        ? prevSelected.filter((id) => id !== userId)
+        : [...prevSelected, userId]
+    );
+  };
+
+  // Обработчик для кнопки "Сравнить"
+  const handleCompareStudents = () => {
+    if (selectedStudentsForCompare.length < 2) {
+      alert("Выберите как минимум двух студентов для сравнения.");
+      return;
+    }
+    setIsCompareModalOpen(true); // Открываем модальное окно
   };
 
   return (
     <div className="bg-bg-default min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Рейтинг студентов</h1>
-          <p className="mt-2 text-gray-600">Просмотр и фильтрация IT-студентов по различным критериям</p>
+          <h1 className="text-3xl font-bold text-gray-900">
+            Рейтинг пользователей
+          </h1>{" "}
+          {/* Изменено */}
+          <p className="mt-2 text-gray-600">
+            Просмотр и фильтрация пользователей по различным критериям
+          </p>{" "}
+          {/* Изменено */}
         </div>
 
+        {/* Filters компонент потребует значительной адаптации */}
         <Filters
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           selectedCourse={selectedCourse}
           setSelectedCourse={setSelectedCourse}
+          // selectedRole, roles, ratings - нужно переделать
           selectedRole={selectedRole}
           setSelectedRole={setSelectedRole}
+          roles={roleOptions} // Передаем опции для ролей/категорий
           selectedRating={selectedRating}
           setSelectedRating={setSelectedRating}
+          ratingsOptions={ratingOptions} // Передаем опции для рейтинга
+          // Логика для skill tags в Filters также потребует переделки
           skillSearchQuery={skillSearchQuery}
           setSkillSearchQuery={setSkillSearchQuery}
-          filteredSkills={filteredSkills}
-          addSkillTag={addSkillTag}
-          selectedSkillTags={selectedSkillTags}
-          removeSkillTag={removeSkillTag}
-          updateSkillLevel={updateSkillLevel}
-          resetFilters={resetFilters}
-          roles={roles}
-          ratings={ratings}
+          availableSkills={availableSkills} // Передаем загруженные навыки
+          addSkillTag={addSkillTagToFilter} // Обновленная функция
+          selectedSkillTags={selectedSkillTags} // Теперь это SelectedSkillFilter[]
+          removeSkillTag={removeSkillTagFromFilter} // Обновленная функция
+          updateSkillLevel={updateSkillRatingInFilter} // Обновленная функция
+          resetFilters={resetFiltersAndSearch}
         />
 
-        <StudentsTable
-          students={filteredStudents}
-          sortConfig={sortConfig}
-          requestSort={requestSort}
+        {(searchMutation.isLoading || isLoadingSkills) && (
+          <div>Загрузка данных...</div>
+        )}
+        {searchMutation.error && (
+          <div>Ошибка поиска: {searchMutation.error.message}</div>
+        )}
+
+        {/* Кнопка Сравнить */}
+        {selectedStudentsForCompare.length > 0 && (
+          <div className="my-4 text-right">
+            <button
+              onClick={handleCompareStudents}
+              disabled={
+                selectedStudentsForCompare.length < 2 ||
+                searchMutation.isLoading
+              }
+              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-400 transition-colors"
+            >
+              Сравнить{" "}
+              {selectedStudentsForCompare.length > 0
+                ? `(${selectedStudentsForCompare.length})`
+                : ""}
+            </button>
+          </div>
+        )}
+
+        {/* StudentsTable компонент потребует значительной адаптации */}
+        <div className="mt-8">
+          <StudentsTable
+            students={sortedStudents} // Передаем отсортированных пользователей
+            sortConfig={sortConfig}
+            requestSort={requestSort}
+            selectedStudents={selectedStudentsForCompare} // Передаем выбранных студентов
+            onToggleStudentSelection={handleToggleStudentSelection} // Передаем обработчик
+          />
+        </div>
+        {/* TODO: Добавить компонент пагинации */}
+
+        <StudentCompareModal
+          isOpen={isCompareModalOpen}
+          onClose={() => setIsCompareModalOpen(false)}
+          studentIds={selectedStudentsForCompare}
         />
       </div>
     </div>
   );
 }
+// ... остальной код, если есть (комментарии, useEffect для первоначальной загрузки и т.д.)
