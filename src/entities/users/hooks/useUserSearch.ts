@@ -1,9 +1,8 @@
-import { useMutation, UseMutationOptions } from "@tanstack/react-query";
+import {useMutation, UseMutationOptions} from "@tanstack/react-query";
 import { usersApi } from "../api/usersApi";
 import {
   UserSearchRequestBody,
-  UserSearchQueryParams,
-  UserSearchResponse,
+  UserSearchQueryParams, UserSearchResponse,
 } from "@/shared/types/api/users";
 
 interface UserSearchVariables {

@@ -14,6 +14,7 @@ type StudentsTableProps = {
   requestSort: (key: string) => void;
   selectedStudents: string[]; // ID выбранных студентов
   onToggleStudentSelection: (userId: string) => void; // Функция для выбора/снятия выбора
+  studentsCount?: number;
 };
 
 export const StudentsTable = ({
@@ -22,6 +23,7 @@ export const StudentsTable = ({
   requestSort,
   selectedStudents,
   onToggleStudentSelection,
+  studentsCount = 0,
 }: StudentsTableProps) => {
   const router = useRouter(); // Инициализируем router
 
@@ -41,8 +43,7 @@ export const StudentsTable = ({
     <div className="bg-white shadow-md rounded-lg overflow-hidden">
       <div className="px-4 py-5 sm:px-6 border-b border-gray-200 bg-[#636ae8] text-white">
         <h3 className="text-lg leading-6 font-medium">
-          {/* Студенты ({students.length}) - меняем на Пользователи */}
-          Пользователи ({students.length})
+          Пользователи ({studentsCount})
         </h3>
       </div>
 
@@ -190,7 +191,7 @@ export const StudentsTable = ({
                     {user.averageSkillRating !== undefined &&
                     user.averageSkillRating !== null ? (
                       <div className="flex items-center text-sm text-gray-900">
-                        <span>{(user.averageSkillRating / 20).toFixed(1)}</span>
+                        <span>{user.averageSkillRating.toFixed(1)}</span>
                         <Star className="h-4 w-4 ml-1 text-yellow-400 fill-yellow-400" />
                       </div>
                     ) : (

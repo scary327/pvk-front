@@ -1,5 +1,7 @@
 // Типы для запроса POST /api/users/search
 
+import {PageableInfo} from "@/shared/types/api/skills";
+
 export interface SkillCriterion {
   skillId: number;
   minRating: number;
@@ -60,14 +62,9 @@ export interface UserSearchResponse {
   size: number;
   content: UserSearchResultItem[];
   number: number;
-  // Предполагаем, что SortInfo и PageableInfo похожи на те, что в SkillSearchResponse
-  // Если они отличаются, их нужно будет определить здесь или импортировать
-  // Для простоты пока не будем добавлять SortInfo и PageableInfo,
-  // так как они не используются напрямую в onSuccess callback хука useUserSearch
-  // но если они нужны, их можно добавить по аналогии с SkillSearchResponse
   first: boolean;
   last: boolean;
   empty: boolean;
   numberOfElements: number;
-  // pageable: PageableInfo; // Опционально, если нужно
+  pageable: PageableInfo; // Опционально, если нужно
 }

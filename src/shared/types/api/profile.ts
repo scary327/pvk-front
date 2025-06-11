@@ -32,6 +32,7 @@ export interface Skill {
   id: number; // Предполагаем, что id числовые, как в примере
   name: string;
   rating: number;
+  isNecessary: boolean;
 }
 
 export interface Category {

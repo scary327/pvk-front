@@ -1,4 +1,5 @@
 import * as Slider from '@radix-ui/react-slider';
+import {DEFAULT_FULL_RATING} from "@/shared/constants";
 
 type SkillLevelSliderProps = {
   value: number;
@@ -10,7 +11,7 @@ export const SkillLevelSlider = ({ value, onChange }: SkillLevelSliderProps) => 
     <Slider.Root
       className="relative flex items-center select-none touch-none w-full h-5"
       value={[value]}
-      max={100}
+      max={DEFAULT_FULL_RATING}
       step={1}
       onValueChange={([newValue]) => onChange(newValue)}
     >

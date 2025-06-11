@@ -228,13 +228,14 @@ export const Filters = ({
                       <X className="h-4 w-4" />
                     </button>
                   </div>
-                  <div className="flex items-center space-x-1">
+                  <div className="flex items-center space-x-1 gap-x-[8px]">
                     <SkillLevelSlider
                       value={tag.minRating}
                       onChange={(rating) =>
                         updateSkillLevel(tag.skillId, rating)
                       }
                     />
+                    <span>{tag.minRating}</span>
                   </div>
                 </div>
               ))}

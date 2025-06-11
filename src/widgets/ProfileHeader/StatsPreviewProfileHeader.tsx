@@ -85,18 +85,18 @@ export const StatsPreviewProfileHeader = memo(
 
             {/* Stats */}
             <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-gray-50 p-4 rounded">
+              <div className="bg-gray-50 p-4 rounded flex flex-col items-start gap-y-[4px] col-span-2">
                 <dt className="text-sm font-medium text-gray-500">
                   Лучший навык
                 </dt>
                 {profileData.bestSkill && (
-                  <dd className="mt-1 text-xl font-semibold text-gray-900">
+                  <dd className="mt-1 text-xl font-semibold text-gray-900 max-w-full overflow-hidden text-ellipsis">
                     {profileData.bestSkill.name}
-                    <span className="text-sm text-gray-500 ml-2">
-                      Рейтинг: {profileData.bestSkill.rating}
-                    </span>
                   </dd>
                 )}
+                <span className="text-sm text-gray-500">
+                  Рейтинг: {profileData.bestSkill.rating}
+                </span>
               </div>
               <div className="bg-gray-50 p-4 rounded">
                 <dt className="text-sm font-medium text-gray-500">
@@ -106,14 +106,14 @@ export const StatsPreviewProfileHeader = memo(
                   {profileData.totalNumberSkills}
                 </dd>
               </div>
-              <div className="bg-gray-50 p-4 rounded">
-                <dt className="text-sm font-medium text-gray-500">
-                  Категории навыков
-                </dt>
-                <dd className="mt-1 text-xl font-semibold text-gray-900">
-                  {profileData.skillCategories.length}
-                </dd>
-              </div>
+              {/*<div className="bg-gray-50 p-4 rounded">*/}
+              {/*  <dt className="text-sm font-medium text-gray-500">*/}
+              {/*    Категории навыков*/}
+              {/*  </dt>*/}
+              {/*  <dd className="mt-1 text-xl font-semibold text-gray-900">*/}
+              {/*    {profileData.skillCategories.length}*/}
+              {/*  </dd>*/}
+              {/*</div>*/}
             </div>
           </div>
         </div>

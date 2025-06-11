@@ -3,10 +3,11 @@ import * as Tooltip from "@radix-ui/react-tooltip";
 import * as Progress from "@radix-ui/react-progress";
 import { Skill } from "@/shared/types/profile";
 import { XIcon } from "lucide-react";
+import {DEFAULT_FULL_RATING} from "@/shared/constants";
 
 interface SkillTagProps {
   skill: Partial<
-    Omit<Skill, "id"> & { id?: number; name: string; rating?: number }
+    Omit<Skill, "id"> & { id?: number; name: string; rating?: number, isNecessary: boolean }
   >;
   color: string;
   variant?: "default" | "outline";
@@ -64,10 +65,10 @@ export const SkillTag = memo(
             {skill.rating}
           </span>
         )}
-        {shouldShowRemoveButton && (
+        {shouldShowRemoveButton && !skill.isNecessary && (
           <button
             onClick={handleRemoveClick}
-            className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-700 flex items-center justify-center"
+            className="absolute -top-1 -right-1 bg-[#EF4444] text-white rounded-full p-0.5 hover:bg-[#EF4444] flex items-center justify-center"
             aria-label="Remove skill"
             style={{ width: "16px", height: "16px" }}
           >
@@ -105,7 +106,7 @@ export const SkillTag = memo(
                         className="h-full transition-transform"
                         style={{
                           transform: `translateX(-${
-                            100 - (skill.rating || 0)
+                              DEFAULT_FULL_RATING - (skill.rating || 0)
                           }%)`,
                           backgroundColor: color,
                         }}

@@ -4,6 +4,7 @@ import { useSkillCategories } from "@/entities/skillCategories/hooks/useSkillCat
 import { useUpdateMainSkillCategory } from "@/entities/profile/hooks/useUpdateMainSkillCategory";
 import { getContrastColor } from "@/shared/utils/colorUtils";
 import { XIcon } from "lucide-react";
+import clsx from "clsx";
 
 interface SelectMainCategoryPopoverProps {
   isOpen: boolean;
@@ -125,21 +126,22 @@ export const SelectMainCategoryPopover = ({
                     updateCategoryMutation.isLoading ||
                     category.id === currentCategoryId
                   }
-                  className={`w-full text-left p-2 rounded transition-colors
-                    hover:bg-gray-100 
-                    disabled:opacity-60 disabled:cursor-not-allowed 
-                    ${
-                      category.id === currentCategoryId
-                        ? "bg-blue-500 text-white font-semibold focus:outline-none focus:ring-1 focus:ring-blue-400"
-                        : "text-gray-700 hover:text-gray-900"
-                    }`}
+                  className={clsx(
+                    "w-full text-left p-2 rounded transition-colors disabled:opacity-60 disabled:cursor-not-allowed",
+                    {
+                      "bg-blue-500 hover:bg-blue-800 text-white font-semibold focus:outline-none focus:ring-1 focus:ring-blue-400":
+                        category.id === currentCategoryId,
+                      "text-gray-700 hover:text-gray-900":
+                        category.id !== currentCategoryId,
+                    }
+                  )}
                   style={
                     category.id !== currentCategoryId && category.color
                       ? {
                           backgroundColor: category.color,
                           color: getContrastColor(category.color),
                         }
-                      : {}
+                      : undefined
                   }
                 >
                   {category.name}
